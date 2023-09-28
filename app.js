@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Book = require('./models/Book');
+const router = express.Router();
+const BookRoutes = require('./routes/Book')
+const userRoutes = require('./routes/User');
+const path = require('path');
 
 
 const app = express();
@@ -14,6 +17,7 @@ mongoose.connect('mongodb+srv://CMickus:m39u2zu7FuMk4WoT@cluster0.xasfo6b.mongod
 
 app.use(express.json());
 
+
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -21,19 +25,10 @@ app.use((req, res, next) => {
     next();
   });
 
-  app.get('/api/stuff', (req, res, next) => {
-    Book.find()
-      .then(things => res.status(200).json(things))
-      .catch(error => res.status(400).json({ error }));
-  });
+//app.use(bodyParser.json())
 
-  app.post('/api/stuff', (req, res, next) => {
-    delete req.body._id;
-    const thing = new Book({
-      ...req.body
-    });
-    thing.save()
-      .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
-      .catch(error => res.status(400).json({ error }));
-  });
+  app.use('/api/Book', BookRoutes)
+  app.use('/api/auth', userRoutes);
+
+  app.use('/images', express.static(path.join(__dirname, 'images')));
 module.exports = app;
