@@ -2,19 +2,16 @@ const Book = require('../models/Book');
 const fs = require('fs');
 const sharp = require('sharp');
 
-exports.createBook = /*async*/ (req, res, next) => {
+exports.createBook = async (req, res, next) => {
     const BookObject = JSON.parse(req.body.Book);
     delete BookObject._id;
     delete BookObject._userId;
-    const { buffer, originalname } = req.file;
-    /*await sharp(buffer)
-        .webp({quality: 20})*/
+    const optimized = await sharp(req.file)
+        .webp({quality: 20})
     const Book = new Book({
         ...BookObject,
         userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        /*ratings:[]
-        averageRating: 0 */
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${optimized.filename}`
     });
     Book.save()
     .then(
@@ -33,6 +30,8 @@ exports.createBook = /*async*/ (req, res, next) => {
     );
 };
 
+
+// non fonctionel j'ai mal compris comment sont pris les paramètres visiblement et comment ils sont envoyer
 exports.rateBook = (req, res, next) =>{
     const bookObject = req.file ? {
         ...JSON.parse(req.body.book),
