@@ -125,3 +125,20 @@ exports.getAllBooks = (req, res, next) => {
         }
     );
 };
+
+exports.getBestBooks = (req, res, next) => {
+    const allBooks = new Array(Book)
+    let topBooks = allBooks.sort((elem.averagerating, elem.averagerating) => (b-a)).slice(0,3);
+    topBooks.find().then(
+        (Books) => {
+            res.status(200).json(Books);
+        }
+    )
+    .catch(
+        (error) => {
+            res.status(400).json({
+                error: error
+            });
+        }
+    );
+};
