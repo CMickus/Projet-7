@@ -1,16 +1,20 @@
 const Book = require('../models/Book');
 const fs = require('fs');
+const sharp = require('sharp');
 
-exports.createBook = (req, res, next) => {
+exports.createBook = /*async*/ (req, res, next) => {
     const BookObject = JSON.parse(req.body.Book);
     delete BookObject._id;
-    delete BookObject._userId;    
+    delete BookObject._userId;
+    const { buffer, originalname } = req.file;
+    /*await sharp(buffer)
+        .webp({quality: 20})*/
     const Book = new Book({
         ...BookObject,
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        //ratings: [userId: req.auth.userId]
-        //averagerating const sum = [1, 2, 3].reduce((partialSum, a) => partialSum + a, 0);
+        /*ratings:[]
+        averageRating: 0 */
     });
     Book.save()
     .then(
@@ -28,6 +32,28 @@ exports.createBook = (req, res, next) => {
         }
     );
 };
+
+exports.rateBook = (req, res, next) =>{
+    const bookObject = req.file ? {
+        ...JSON.parse(req.body.book),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...req.body };
+  
+    Book.findOne({_id: req.params.id},{ratings[{userId}]: req.params._userId})
+        .then((book) => {
+            if (book.rating[userId] = req.auth.userId) {
+                res.status(401).json({ message : 'Not authorized'});
+            } else {
+                const average = (ratings.grade.reduce((partialSum, a) => partialSum + a, 0))/ratings.length
+                Book.updateOne({ _id: req.params.id}, { ...bookObject, ratings.append({userId: req.auth.userId, rating})})
+                .then(() => res.status(200).json({message : 'Objet modifié!'}))
+                .catch(error => res.status(401).json({ error }));
+            }
+        })
+        .catch((error) => {
+            res.status(400).json({ error });
+        });
+}
 
 exports.getOneBook = (req, res, next) => {
     Book.findOne({
