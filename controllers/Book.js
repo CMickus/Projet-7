@@ -8,10 +8,17 @@ exports.createBook = async (req, res, next) => {
     delete BookObject._userId;
     const optimized = await sharp(req.file)
         .webp({quality: 20})
+        .resize(200, 200)
+    const startRating = [{
+        userId : "first",
+        grade: 0,
+    }]
     const Book = new Book({
         ...BookObject,
         userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${optimized.filename}`
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${optimized.filename}`,
+        ratings: startRating, 
+        averageRating: 0,
     });
     Book.save()
     .then(
@@ -43,8 +50,16 @@ exports.rateBook = (req, res, next) =>{
             if (book.rating[userId] = req.auth.userId) {
                 res.status(401).json({ message : 'Not authorized'});
             } else {
-                const average = (ratings.grade.reduce((partialSum, a) => partialSum + a, 0))/ratings.length
-                Book.updateOne({ _id: req.params.id}, { ...bookObject, ratings.append({userId: req.auth.userId, rating})})
+                () =>{
+                    let average = 0
+                    for( let i = 1; i <= req.ratings.length; i++){
+                        average = average + req.ratings[i].grade
+                    }
+                    average = average/req.ratings.length
+                }
+                //const average = (ratings.grade.reduce((partialSum, a) => partialSum + a, 0))/ratings.length
+                ratings.append({userId: req.auth.userId, grade})
+                Book.updateOne({ _id: req.params.id}, { ...bookObject, })
                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
                 .catch(error => res.status(401).json({ error }));
             }
@@ -128,6 +143,7 @@ exports.getAllBooks = (req, res, next) => {
 
 exports.getBestBooks = (req, res, next) => {
     const allBooks = new Array(Book.averageRating)
+    allBooks.shift()
     let topBooks = allBooks.sort((a,b) => (b-a)).slice(0,3);
     topBooks.find().then(
         (Books) => {
