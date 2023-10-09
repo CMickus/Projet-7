@@ -16,7 +16,7 @@ const emailValidator = require('email-validator')
 // faire des verification des mails reg ex a check
 exports.signup = (req, res, next) => {
 
-  if (req.body.email) {
+  if (req.body.email && validator(req.body.password,[not(isEmpty)])) {
     if (validator(req.body.password, [
       not(isEmpty),
       minLength(8),
