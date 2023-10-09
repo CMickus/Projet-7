@@ -2,6 +2,7 @@ const Book = require('../models/Book');
 const fs = require('fs');
 const sharp = require('sharp');
 
+
 exports.createBook = async (req, res, next) => {
     const BookObject = JSON.parse(req.body.Book);
     delete BookObject._id;
@@ -9,15 +10,12 @@ exports.createBook = async (req, res, next) => {
     const optimized = await sharp(req.file)
         .webp({quality: 20})
         .resize(200, 200)
-    const startRating = [{
-        userId : "first",
-        grade: 0,
-    }]
+        .toFile(`${req.file}.webp`)
     const Book = new Book({
         ...BookObject,
         userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${optimized.filename}`,
-        ratings: startRating, 
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${optimized}`,// verifier l'url
+        ratings: [], 
         averageRating: 0,
     });
     Book.save()
@@ -45,12 +43,15 @@ exports.rateBook = (req, res, next) =>{
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
   
-    Book.findOne({_id: req.params.id},{ratings[{userId}]: req.params._userId})
+    Book.findOne({_id: req.params.id})
         .then((book) => {
+            //find simple d'un userId
             if (book.rating[userId] = req.auth.userId) {
                 res.status(401).json({ message : 'Not authorized'});
             } else {
                 () =>{
+
+                    //corriger average en conséquance
                     let average = 0
                     for( let i = 1; i <= req.ratings.length; i++){
                         average = average + req.ratings[i].grade
@@ -72,9 +73,12 @@ exports.rateBook = (req, res, next) =>{
 exports.getOneBook = (req, res, next) => {
     Book.findOne({
         _id: req.params.id
-    }).then(
-        (Book) => {
+    })
+    .then(
+        if (Book != null){
             res.status(200).json(Book);
+        } else {
+            res.status(404).json;
         }
     )
     .catch(
@@ -126,6 +130,7 @@ exports.modifyBook = (req, res, next) => {
             res.status(500).json({ error });
         });
  };
+
 exports.getAllBooks = (req, res, next) => {
     Book.find().then(
         (Books) => {
@@ -142,10 +147,7 @@ exports.getAllBooks = (req, res, next) => {
 };
 
 exports.getBestBooks = (req, res, next) => {
-    const allBooks = new Array(Book.averageRating)
-    allBooks.shift()
-    let topBooks = allBooks.sort((a,b) => (b-a)).slice(0,3);
-    topBooks.find().then(
+    topBooks.find().sort({averageRating: 'desc'}).limit(3).then(
         (Books) => {
             res.status(200).json(Books);
         }
