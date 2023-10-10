@@ -16,7 +16,7 @@ const emailValidator = require('email-validator')
 // faire des verification des mails reg ex a check
 exports.signup = (req, res, next) => {
 
-  if (req.body.email && validator(req.body.password,[not(isEmpty)])) {
+  if (validator.validate(req.body.email) && validator(req.body.password,[not(isEmpty)])) {
     if (validator(req.body.password, [
       not(isEmpty),
       minLength(8),
@@ -60,7 +60,7 @@ exports.login = (req, res, next) => {
             userId: user._id,
             token: jwt.sign(
               { userId: user._id },
-              `${process.env.SECRET_KEY}`,//a mettre dans un env
+              `${process.env.SECRET_KEY}`,
               { expiresIn: '24h' }
             )
           });
