@@ -57,10 +57,9 @@ exports.rateBook = (req, res, next) => {
             if (!book) {
                 return res.status(404).json({ error: error })
             }
-            if (book.rating[userId] === req.auth.userId) {
-                return res.status(403).json({ message: 'Not authorized' });
-            }
-            if (grade <= 0 && grade >= 5) {
+            if (book.ratings[userId] === req.auth.userId) { //sinon utiliser find ratings.find(rating ...) aussi si il existe on remplace la valeur
+                return res.status(403).json({ message: 'Not authorized' }); //donc remplacer le find sera plus simple 
+            } else { 
                 ratings.append({ userId: req.auth.userId, grade })
             }
             () => {
