@@ -1,12 +1,11 @@
 const Book = require('../models/Book');
 const fs = require('fs');
 const sharp = require('sharp');
-import {
-    validator,
-    isEmpty,
-} from "string-validators";
+//const validator = require('string-validators');
+//const isEmpty = require('string-validators');
 
 
+//trovuer un autre moyen de faire les validations
 exports.createBook = async (req, res, next) => {
     const BookObject = JSON.parse(req.body.Book);
     delete BookObject._id;
@@ -15,17 +14,18 @@ exports.createBook = async (req, res, next) => {
         .webp({ quality: 20 })
         .resize(200, 200)
         .toFile(`${req.file}.webp`)
-    if (validator(req.title, not(isEmpty)) && validator(req.genre, not(isEmpty)) && validator(req.year, not(isEmpty)) && validator(req.author, not(isEmpty))) {
+        //verifier la ocnstruction du nom
+   /* if (validator(req.title, not(isEmpty)) && validator(req.genre, not(isEmpty)) && validator(req.year, not(isEmpty)) && validator(req.author, not(isEmpty))) {
         const Book = new Book({
             ...BookObject,
             userId: req.auth.userId,
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${optimized}`,// verifier l'url
+            imageUrl: `${req.protocol}://${req.get('host')}/Book/images/${optimized.filenames}`,// verifier l'url
             ratings: [],
             averageRating: 0,
         });
     } else {
         return res.status(401).json({ error: `Le titre le genre l'année et l'autheur ne peuvent pas être vide` })
-    }
+    }*/
     Book.save()
         .then(
             () => {

@@ -4,12 +4,14 @@ const router = express.Router();
 const BookRoutes = require('./routes/Book')
 const userRoutes = require('./routes/User');
 const path = require('path');
-require('dotenv').config
 
+const result = require('dotenv').config;
+console.error(result.error)
 
 const app = express();
 // catch les erreurs d'end point
-mongoose.connect(`mongodb+srv://CMickus:${process.env.MONGO_KEY}@cluster0.xasfo6b.mongodb.net/`,
+console.log(`mongodb+srv://${process.env.MONGO_IDENTIFICATION}:${process.env.MONGO_KEY}@${process.env.MONGO_CLUSTER}`, result.error)
+mongoose.connect(`mongodb+srv://${process.env.MONGO_IDENTIFICATION}:${process.env.MONGO_KEY}@${process.env.MONGO_CLUSTER}`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -32,6 +34,6 @@ app.use((req, res, next) => {
   app.use('/api/auth', userRoutes);
 
   app.use('/images', express.static(path.join(__dirname, 'images')));
-  app.use('*', res.status(404).json({error: error}))
+  app.use('*',(req,res)=>{ return res.status(404).json({error: error})})
  // app.use('api error')
 module.exports = app;

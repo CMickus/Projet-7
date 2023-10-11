@@ -2,29 +2,29 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 require('dotenv').config
-import {
-  validator,
-  minLength,
-  containsOneOfCharsCount,
-  CHARSET_LOWER_ALPHA,
-  CHARSET_NUMBER,
-  CHARSET_UPPER_ALPHA,
-  isEmpty,
-} from "string-validators";
-const emailValidator = require('email-validator')
+
+//const  validator = require('string-validators');
+/*const minLength = require('string-validators');
+const containsOneOfCharsCount = require('string-validators');
+const CHARSET_LOWER_ALPHA = require('string-validators');
+const CHARSET_NUMBER = require('string-validators');
+const CHARSET_UPPER_ALPHA = require('string-validators');
+const isEmpty = require('string-validators');*/
+
+//const emailValidator = require('email-validator')
 
 // faire des verification des mails reg ex a check
 exports.signup = (req, res, next) => {
 
   if (validator.validate(req.body.email) && validator(req.body.password,[not(isEmpty)])) {
-    if (validator(req.body.password, [
-      not(isEmpty),
+    if (validator(req.body.password, /*[
+      ot(isEmpty),
       minLength(8),
       containsOneOfCharsMinCount(CHARSET_LOWER_ALPHA, 1),
       containsOneOfCharsMinCount(CHARSET_UPPER_ALPHA, 1),
       containsOneOfCharsMinCount(CHARSET_NUMBER, 1),
       containsOneOfCharsMinCount('$#%+*-=[]/(){}€£!?_\^°~<>.,;|', 1),
-    ])) {
+    ]*/)) {
       bcrypt.hash(req.body.password, 10)
         .then(hash => {
           const user = new User({
