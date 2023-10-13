@@ -1,30 +1,19 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User')
-const bcrypt = require('bcrypt')
-require('dotenv').config
-
-//const  validator = require('string-validators');
-/*const minLength = require('string-validators');
-const containsOneOfCharsCount = require('string-validators');
-const CHARSET_LOWER_ALPHA = require('string-validators');
-const CHARSET_NUMBER = require('string-validators');
-const CHARSET_UPPER_ALPHA = require('string-validators');
-const isEmpty = require('string-validators');*/
-
-//const emailValidator = require('email-validator')
+const bcrypt = require('bcrypt');
+const { contains, includes } = require('underscore');
+require('dotenv').config();
+const validator = require('email-validator')
 
 // faire des verification des mails reg ex a check
 exports.signup = (req, res, next) => {
 
-  if (validator.validate(req.body.email) && validator(req.body.password,[not(isEmpty)])) {
-    if (validator(req.body.password, /*[
-      ot(isEmpty),
-      minLength(8),
-      containsOneOfCharsMinCount(CHARSET_LOWER_ALPHA, 1),
-      containsOneOfCharsMinCount(CHARSET_UPPER_ALPHA, 1),
-      containsOneOfCharsMinCount(CHARSET_NUMBER, 1),
-      containsOneOfCharsMinCount('$#%+*-=[]/(){}€£!?_\^°~<>.,;|', 1),
-    ]*/)) {
+  if (validator.validate(req.body.email)) {
+    if (req.body.password.some(includes('$', '#', '%', '+', '*', '-', '=', '[', ']', '/', '(', ')', '{', '}', '€', '£', '!', '?', '_', '^', '°', '~', '<', '>', '.', ',', ';', '|'))
+      && req.body.password.some(includes(/[0-9]/))
+      && req.body.password.some(includes(/[A-Z]/))
+      && req.body.password.some(includes(/[a-z]/))
+      && req.body.password.length > 7) {
       bcrypt.hash(req.body.password, 10)
         .then(hash => {
           const user = new User({
@@ -37,10 +26,10 @@ exports.signup = (req, res, next) => {
         })
         .catch(error => res.status(500).json({ error }));
     } else {
-        return res.status(403).json({error: 'Mot de passe incorrect, necessite au moins 8 charactères, une majuscule, une minuscule, un chiffre, et un charactère spécial'})
+      return res.status(403).json({ error: 'Mot de passe incorrect, necessite au moins 8 charactères, une majuscule, une minuscule, un chiffre, et un charactère spécial' })
     }
-  } else{
-    return res.status(403).json({error: `L'identifiant doit être un email valide` })
+  } else {
+    return res.status(403).json({ error: `L'identifiant doit être un email valide` })
   }
 };
 

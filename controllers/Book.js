@@ -15,7 +15,7 @@ exports.createBook = async (req, res, next) => {
         .resize(200, 200)
         .toFile(`${req.file}.webp`)
         //verifier la ocnstruction du nom
-   /* if (validator(req.title, not(isEmpty)) && validator(req.genre, not(isEmpty)) && validator(req.year, not(isEmpty)) && validator(req.author, not(isEmpty))) {
+    if (req.title.length === 0 && req.genre.length === 0 && req.year.length === 0 && req.author.length === 0){
         const Book = new Book({
             ...BookObject,
             userId: req.auth.userId,
@@ -25,7 +25,7 @@ exports.createBook = async (req, res, next) => {
         });
     } else {
         return res.status(401).json({ error: `Le titre le genre l'année et l'autheur ne peuvent pas être vide` })
-    }*/
+    }
     Book.save()
         .then(
             () => {
@@ -57,10 +57,13 @@ exports.rateBook = (req, res, next) => {
             if (!book) {
                 return res.status(404).json({ error: error })
             }
-            if (book.ratings[userId] === req.auth.userId) { //sinon utiliser find ratings.find(rating ...) aussi si il existe on remplace la valeur
-                return res.status(403).json({ message: 'Not authorized' }); //donc remplacer le find sera plus simple 
-            } else { 
-                ratings.append({ userId: req.auth.userId, grade })
+            const ThatBook = book.ratings.find((user)=> user === req.auth.userId)
+            if (Thatbook === undefined){
+                book.ratings.append({ userId: req.auth.userId, grade })
+            } else {
+                const ThatBookIndex = book.ratings.findIndex((user)=> user === req.auth.userId)
+                delete book.ratings[ThatBookIndex]
+                book.ratings.append({ userId: req.auth.userId, grade })
             }
             () => {
 
@@ -118,12 +121,12 @@ exports.modifyBook = (req, res, next) => {
             }
             if (book.userId != req.auth.userId) {
                 res.status(403).json({ message: 'Not authorized' });
-            } else if (validator(req.title, not(isEmpty)) && validator(req.genre, not(isEmpty)) && validator(req.year, not(isEmpty)) && validator(req.author, not(isEmpty))) {
+            } else if  (req.title.length === 0 && req.genre.length === 0 && req.year.length === 0 && req.author.length === 0){
                 Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Objet modifié!' }))
                     .catch(error => res.status(401).json({ error }));
             } else {
-                return res.status(401).json({ error: `Le titre le genre l'année et l'autheur ne peuvent pas être vide` })
+                return res.status(401).json({ error: `Le titre, le genre, l'année, et/ou l'autheur ne peuvent pas être vide` })
             }
         })
         .catch((error) => {
