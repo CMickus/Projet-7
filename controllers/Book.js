@@ -171,11 +171,18 @@ exports.getAllBooks = (req, res, next) => {
 };
 
 exports.getBestBooks = (req, res, next) => {
-    topBooks.find().sort({ averageRating: 'desc' }).limit(3).then(
-        (Books) => {
-            res.status(200).json(Books);
+    const sortedBooks =[]
+    for(let i = 0; i < Book.length; i++){
+        sortedBooks.append(Book[i].averageRating)
+    }
+    console.log(sortedBooks)
+    sortedBooks.sort((a,b)=>{return b - a})
+    const bestBooks = [sortedBooks[0],sortedBooks[1],sortedBooks[2]]
+        bestBooks.find().then(
+        (bestBook) => {
+            res.status(200).json(bestBook);
         }
-    )
+        )
         .catch(
             (error) => {
                 res.status(400).json({

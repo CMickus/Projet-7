@@ -10,7 +10,7 @@ exports.signup = (req, res, next) => {
 
   if (validator.validate(req.body.email)) {
     const RegExTest = /^(?=.*[¨^£$¤!§:/;.?,<>&~"#'\{\(\[\]\)\}\]\\|\-`_°+-=%)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g
-    console.log(RegExTest.test("Totofaitdesbulles<3"))
+    console.log(RegExTest.test(req.body.password))
     if (RegExTest.test(req.body.password)){
       bcrypt.hash(req.body.password, 10)
         .then(hash => {
