@@ -9,11 +9,9 @@ const validator = require('email-validator')
 exports.signup = (req, res, next) => {
 
   if (validator.validate(req.body.email)) {
-    if (req.body.password.some(includes('$', '#', '%', '+', '*', '-', '=', '[', ']', '/', '(', ')', '{', '}', '€', '£', '!', '?', '_', '^', '°', '~', '<', '>', '.', ',', ';', '|'))
-      && req.body.password.some(includes(/[0-9]/))
-      && req.body.password.some(includes(/[A-Z]/))
-      && req.body.password.some(includes(/[a-z]/))
-      && req.body.password.length > 7) {
+    const RegExTest = /^(?=.*[¨^£$¤!§:/;.?,<>&~"#'\{\(\[\]\)\}\]\\|\-`_°+-=%)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g
+    console.log(RegExTest.test("Totofaitdesbulles<3"))
+    if (RegExTest.test(req.body.password)){
       bcrypt.hash(req.body.password, 10)
         .then(hash => {
           const user = new User({
