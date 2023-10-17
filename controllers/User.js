@@ -9,9 +9,11 @@ const validator = require('email-validator')
 exports.signup = (req, res, next) => {
 
   if (validator.validate(req.body.email)) {
-    const RegExTest = /^(?=.*[¨^£$¤!§:/;.?,<>&~"#'\{\(\[\]\)\}\]\\|\-`_°+-=%)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g
+    const RegExTest = /^(?=.*[¨^£$¤!§:\/;.?,<>&~"#'\{\(\[\]\)\}\]\\|\-`_°+-=%])(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g
+    const theTest = RegExTest.test(req.body.password)
     console.log(RegExTest.test(req.body.password))
-    if (RegExTest.test(req.body.password)){
+    console.log(theTest)
+    if (theTest){
       bcrypt.hash(req.body.password, 10)
         .then(hash => {
           const user = new User({

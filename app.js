@@ -4,10 +4,6 @@ const router = express.Router();
 const BookRoutes = require('./routes/Book')
 const userRoutes = require('./routes/User');
 const path = require('path');
-/*
-const NodeRateLimiter = require('node-rate-limiter');
-const nodeRateLimiter = new NodeRateLimiter();
-*/
 const result = require('dotenv').config;
 console.error(result.error)
 
@@ -34,28 +30,10 @@ app.use((req, res, next) => {
 //app.use(bodyParser.json())
 
   app.use('/api/Book', BookRoutes)
-  app.use('/api/auth',/* RequestRateLimitMiddleware, */userRoutes);
+  app.use('/api/auth',userRoutes);
 
   app.use('/images', express.static(path.join(__dirname, 'images')));
   app.use('*',(req,res)=>{ return res.status(404).json({error: error})})
 
-/*
- function RequestRateLimitMiddleware(req, res, next) {
-  nodeRateLimiter.get(res.yourUniqIdForCurrentSession, (err, limit) => {
-    if (err) {
-      return next(err);
-    }
- 
-    res.set('X-RateLimit-Limit', limit.total);
-    res.set('X-RateLimit-Remaining', limit.remaining);
-    res.set('X-RateLimit-Reset', limit.reset);
- 
-    if (limit.remaining) {
-      return next();
-    }
- 
-    res.set('Retry-After', limit.reset);
-    res.send(429, `Rate limit exceeded, retry in ${limit.reset} ms`);
-  });
-}*/
+
 module.exports = app;
