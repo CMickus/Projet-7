@@ -12,14 +12,17 @@ exports.createBook = async (req, res, next) => {
     delete BookObject._userId;
     const optimized = await sharp(req.file)
         .webp({ quality: 20 })
-        .resize(200, 200)
-        .toFile(`${req.file}.webp`)
-        //verifier la ocnstruction du nom
+        .resize(200)
+        .toFile(`${req.file.filename}.webp`)
+        .then(console.log(info))
+        .catch(console.log(err))
+        //verifier la construction du nom
     if (req.title.length === 0 && req.genre.length === 0 && req.year.length === 0 && req.author.length === 0){
+        console.log(optimized.filename)
         const Book = new Book({
             ...BookObject,
             userId: req.auth.userId,
-            imageUrl: `${req.protocol}://${req.get('host')}/Book/images/${optimized.filenames}`,// verifier l'url
+            imageUrl: `${req.protocol}://${req.get('host')}/Book/images/${optimized.filename}`,// verifier l'url
             ratings: [],
             averageRating: 0,
         });
@@ -171,7 +174,7 @@ exports.getAllBooks = (req, res, next) => {
 };
 
 exports.getBestBooks = (req, res, next) => {
-    const sortedBooks =[]
+    /*const sortedBooks =[]
     for(let i = 0; i < Book.length; i++){
         sortedBooks.append(Book[i].averageRating)
     }
@@ -189,5 +192,11 @@ exports.getBestBooks = (req, res, next) => {
                     error: error
                 });
             }
-        );
+        );*/
+    Book.find().sort({    averagerating: 'desc'}).limit(3)
+    .then((books)=>{
+        res.status(200).json(books);
+    })
+    .catch(()=>{res.status(400).json({error : 'error'})})
+
 };

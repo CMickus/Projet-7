@@ -29,11 +29,11 @@ app.use((req, res, next) => {
 
 //app.use(bodyParser.json())
 
-  app.use('/api/Book', BookRoutes)
+  app.use('/api/books', BookRoutes)
   app.use('/api/auth',userRoutes);
 
   app.use('/images', express.static(path.join(__dirname, 'images')));
-  app.use('*',(req,res)=>{ return res.status(404).json({error: error})})
+  app.use('*',(req,res)=>{ return res.status(404).json({error: 'error'})})
 
 
 module.exports = app;

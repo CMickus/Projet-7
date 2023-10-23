@@ -9,7 +9,8 @@ const validator = require('email-validator')
 exports.signup = (req, res, next) => {
 
   if (validator.validate(req.body.email)) {
-    const RegExTest = /^(?=.*[¨^£$¤!§:\/;.?,<>&~"#'\{\(\[\]\)\}\]\\|\-`_°+-=%])(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g
+    const RegExTest = /^(?=.*[¨^£$¤!§:;.?,<>&~"#'\{\(\[\]\)\}\]\\\/\|\\`_°\+\=%-])(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g
+    //const RegExTest = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*?[#?!@$%^&*-£€~§]).{8,}$/g //und es element de la lise
     const theTest = RegExTest.test(req.body.password)
     console.log(RegExTest.test(req.body.password))
     console.log(theTest)
