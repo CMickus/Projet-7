@@ -11,7 +11,7 @@ const rateLimiter = rateLimit({
 	legacyHeaders: false, 
 })
 
-router.post('/signup', rateLimiter, userCtrl.signup);
-router.post('/login', userCtrl.login);
+router.post('/signup', userCtrl.signup);
+router.post('/login', rateLimiter, userCtrl.login);
 
 module.exports = router;
