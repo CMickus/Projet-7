@@ -67,8 +67,9 @@ exports.rateBook = (req, res, next) => {
             } else {
                 const ThatBookIndex = book.ratings.findIndex((user) => user.userId === req.auth.userId)
                 console.log(ThatBookIndex, 'thatindex');
-                delete book.ratings[ThatBookIndex]
-                book.ratings.push({ userId: req.auth.userId, grade: req.body.rating })
+                /*delete book.ratings[ThatBookIndex]
+                book.ratings.push({ userId: req.auth.userId, grade: req.body.rating })*/
+                book.ratings[ThatBookIndex].grade = req.body.rating;
                 console.log(book, 'thatnewbook')
             }
             //corriger average en conséquance

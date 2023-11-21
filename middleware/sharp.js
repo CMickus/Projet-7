@@ -8,11 +8,11 @@ module.exports= (req,res, next) => {
             if (err) {
                 return callback(err);
             }            
-            const newFilename = path.basename(file.originalname, path.extname(file.originalname))
+            const newFilename = path.basename(req.file.originalname, path.extname(req.file.originalname))
             await sharp(image)
                 .webp({ quality: 20 })
                 .resize(200)
-                .toFile("images/" + `${newFilename}.webp`);
+                .toFile("images/" + `${newFilename + Date.now()}.webp`);
             fs.unlink(`images/${req.file.filename}`, ()=>{
                 delete image;
             })
