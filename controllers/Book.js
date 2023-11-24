@@ -16,7 +16,7 @@ exports.createBook = async (req, res, next) => {
         .then(console.log(info))
         .catch(console.log(err))*/
     //verifier la construction du nom
-    console.log(BookObject)
+    console.log(BookObject, req.file.filename)
     if (BookObject.title.length != 0 && BookObject.genre.length != 0 && BookObject.year != null && BookObject.author.length != 0) {
         //console.log(optimized.filename)
         const book = new Book({
@@ -96,9 +96,9 @@ exports.getOneBook = (req, res, next) => {
     Book.findOne({
         _id: req.params.id
     })
-        .then(() => {
-            if (Book != null) {
-                res.status(200).json(Book);
+        .then((book) => {
+            if (book != null) {
+                res.status(200).json(book);
             } else {
                 res.status(404).json;
             }
@@ -118,8 +118,6 @@ exports.modifyBook = (req, res, next) => {
         ...JSON.parse(req.body.book),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
-
-    delete bookObject._userId;
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (!book) {
@@ -127,7 +125,8 @@ exports.modifyBook = (req, res, next) => {
             }
             if (book.userId != req.auth.userId) {
                 res.status(403).json({ message: 'Not authorized' });
-            } else if (req.title.length === 0 && req.genre.length === 0 && req.year.length === 0 && req.author.length === 0) {
+                //(BookObject.title.length != 0 && BookObject.genre.length != 0 && BookObject.year != null && BookObject.author.length != 0
+            } else if (bookObject.title.length != 0 && bookObject.genre.length != 0 && bookObject.year.length != 0 && bookObject.author.length != 0) {
                 Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Objet modifié!' }))
                     .catch(error => res.status(401).json({ error }));
