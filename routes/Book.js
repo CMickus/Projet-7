@@ -3,7 +3,7 @@ const router = express.Router();
 const BookCtrl = require('../controllers/Book');
 const auth = require('../middleware/auth')
 const multer = require('../middleware/multer-config')
-const sharpimage = require('../middleware/sharpimage')
+const sharpimage = require('../middleware/sharp')
 
 router.get('/', BookCtrl.getAllBooks);
 router.post('/', auth, multer, sharpimage, BookCtrl.createBook);
