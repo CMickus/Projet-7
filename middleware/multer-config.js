@@ -17,7 +17,7 @@ const storage =  multer.diskStorage({
     
     const extension = MIME_TYPES[file.mimetype];
     console.log(name)
-    callback(null, Date.now() + name + '.' + extension);
+    callback(null,name + Date.now() + '.' + 'webp');
   }
 });
 

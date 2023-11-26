@@ -9,7 +9,6 @@ console.error(result.error)
 
 const app = express();
 // catch les erreurs d'end point
-console.log(`mongodb+srv://${process.env.MONGO_IDENTIFICATION}:${process.env.MONGO_KEY}@${process.env.MONGO_CLUSTER}`, result.error)
 mongoose.connect(`mongodb+srv://${process.env.MONGO_IDENTIFICATION}:${process.env.MONGO_KEY}@${process.env.MONGO_CLUSTER}`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
