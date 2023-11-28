@@ -10,7 +10,7 @@ module.exports= (req, res, next) => {
             }            
             const newFilename = path.basename(req.file.originalname,path.extname(req.file.originalname)) + Date.now() + `.webp`
             await sharp(image)
-                .webp({ quality: 20 })
+                .avif({ quality: 20 })
                 .resize(200)
                 .toFile("images/" + `${newFilename}`);
             fs.unlink(`images/${req.file.filename}`, ()=>{
@@ -20,6 +20,8 @@ module.exports= (req, res, next) => {
             console.log("********",req.file.filename)        
             next();     
         });
+    } else {
+        console.log("******** next")        
+        next();
     }
-    next()
 }

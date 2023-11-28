@@ -8,17 +8,15 @@ const MIME_TYPES = {
   'image/wepb': 'webp'
 };
 
-const storage =  multer.diskStorage({
+const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, 'images');
   },
-  filename: (req, file, callback) => { 
+  filename: (req, file, callback) => {
     const name = path.basename(file.originalname, path.extname(file.originalname));
-    
     const extension = MIME_TYPES[file.mimetype];
-    console.log(name)
-    callback(null,name + Date.now() + '.' + 'webp');
+    callback(null, name + Date.now() + '.' + extension);
   }
 });
 
-module.exports = multer({storage: storage}).single('image');
+module.exports = multer({ storage: storage }).single('image');
